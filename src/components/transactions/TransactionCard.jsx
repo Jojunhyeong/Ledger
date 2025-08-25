@@ -1,6 +1,6 @@
 import { Minus, Plus } from 'lucide-react'
 
-export default function Transaction({ title, category, amount, date }) {
+export default function TransactionCard({ title, category, amount, date }) {
   const isNegative = Number(amount.replace(/,/g, '')) < 0
   return (
     <div className="flex justify-between border-b border-gray-100 p-10">
