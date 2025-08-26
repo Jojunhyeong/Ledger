@@ -4,7 +4,7 @@ export default function TransactionList() {
   const transaction = [
     { id: 1, category: '식비', description: '점심식사', amount: '-25,000', date: '2025-01-15' },
     { id: 2, category: '급여', description: '1월 급여', amount: '+3,000,000', date: '2025-01-14' },
-    { id: 3, category: '교통비', description: '지하철', amount: '15,000', date: '2025-01-13' },
+    { id: 3, category: '교통비', description: '지하철', amount: '+15,000', date: '2025-01-13' },
     {
       id: 4,
       category: '생활용품',
@@ -25,6 +25,7 @@ export default function TransactionList() {
             description={t.description}
             amount={t.amount}
             date={t.date}
+            variant={'dashboard'}
           />
         ))}
       </div>
