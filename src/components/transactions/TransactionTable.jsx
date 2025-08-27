@@ -1,3 +1,4 @@
+import { formatWon } from '@/utils/formatCurrency'
 import TransactionCard from './TransactionCard'
 
 export default function TransactionTable() {
@@ -15,7 +16,7 @@ export default function TransactionTable() {
       id: 1,
       category: '식비',
       description: '점심식사',
-      amount: '-25,000',
+      amount: -25000,
       date: '2025-01-15',
       account: '신한카드',
       memo: '점심식사',
@@ -25,7 +26,7 @@ export default function TransactionTable() {
       id: 2,
       category: '급여',
       description: '1월 급여',
-      amount: '+3,000,000',
+      amount: 3000000,
       date: '2025-01-14',
       account: '급여통장',
       memo: '1월 급여',
@@ -35,7 +36,7 @@ export default function TransactionTable() {
       id: 3,
       category: '교통비',
       description: '지하철',
-      amount: '15,000',
+      amount: 15000,
       date: '2025-01-13',
       account: '체크카드',
       memo: '지하철',
@@ -45,7 +46,7 @@ export default function TransactionTable() {
       id: 4,
       category: '생활용품',
       description: '마트 장보기',
-      amount: '-45,000',
+      amount: -45000,
       date: '2025-01-12',
       memo: '마트 장보기',
       account: '신한카드',
@@ -70,7 +71,7 @@ export default function TransactionTable() {
             title={t.title}
             category={t.category}
             description={t.description}
-            amount={t.amount}
+            amount={formatWon(t.amount)}
             date={t.date}
             account={t.account}
             memo={t.memo}
