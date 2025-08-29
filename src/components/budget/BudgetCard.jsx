@@ -5,7 +5,7 @@ export default function BudgetCard({ icon: Icon, title, expense, budget, progres
   const isOver = progress > 100
   return (
     <div
-      className={`rounded-lg  w-92  p-5 flex flex-col gap-3 ${isOver ? 'bg-red-100  border border-red-300 ' : 'bg-white border-white'}`}
+      className={`rounded-lg  w-95  p-5 flex flex-col gap-3 ${isOver ? 'bg-red-100  border border-red-300 ' : 'bg-white border-white'}`}
     >
       <div className="flex gap-3 items-center">
         {Icon && (
