@@ -9,17 +9,17 @@ export default function StatCard({ title, amount, rate, type }) {
   return (
     <div className="w-92 h-32 bg-white rounded-lg flex flex-col items-start">
       <div className="text-sm mt-4 ml-4">{title}</div>
-      <div className="flex items-center gap-40">
+      <div className="flex items-center justify-between w-full pr-5">
         <div className={`mt-2 ml-4 text-2xl font-semibold ${amountColor}`}>{amount}</div>
         {type === 'income' ? (
           <ArrowUp className="bg-blue-100 text-blue-500 w-8 h-8 rounded-sm p-1.5" />
         ) : type === 'expense' ? (
-          <ArrowDown className="bg-red-100 text-red-500 w-8 h-8 rounded-sm p-1.5" />
+          <ArrowDown className="bg-red-100 text-red-500 w-8 h-8 rounded-sm p-1.5 items" />
         ) : (
           <Wallet className="bg-green-100 text-green-500 w-8 h-8 rounded-sm p-1.5" />
         )}
       </div>
-      <div className="flex mt-2 ml-4 gap-2">
+      <div className="flex mt-2 ml-3 gap-2">
         <div className={`text-sm ${rateColor}`}>{rate}</div>
         <div className="text-sm text-gray-500">전월 대비</div>
       </div>
