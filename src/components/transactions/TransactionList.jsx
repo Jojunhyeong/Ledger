@@ -1,71 +1,58 @@
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
-import { formatWon } from '@/utils/formatCurrency'
+import { useEffect, useMemo, useCallback } from 'react'
+import { useLedgerStore } from '@/store/useLedgerStore'
 import TransactionCard from './TransactionCard'
+import { formatWon } from '@/utils/formatCurrency'
 
 const pad2 = (n) => String(n).padStart(2, '0')
-const monthRange = (y, m) => {
-  const last = new Date(y, m, 0).getDate() // m: 1~12
-  const ym = `${y}-${pad2(m)}`
-  return { from: `${ym}-01`, to: `${ym}-${pad2(last)}` }
-}
 
-export default function TransactionList({ year, month }) {
-  const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(false)
+export default function TransactionList() {
+  const year = useLedgerStore((s) => s.year)
+  const month = useLedgerStore((s) => s.month)
+  const fetchMonth = useLedgerStore((s) => s.fetchMonth)
+  const loading = useLedgerStore((s) => s.loading)
+
+  const key = `${year}-${pad2(month)}`
+  // ❗ selector에서 새 참조 만들지 말 것 (|| [] 금지)
+  const items = useLedgerStore(useCallback((s) => s.itemsByKey[key], [key]))
+  const list = items ?? [] // ← 컴포넌트에서만 기본값 처리
 
   useEffect(() => {
-    ;(async () => {
-      try {
-        setLoading(true)
+    if (year && month) fetchMonth(year, month) // 캐시 있으면 스킵
+  }, [year, month, fetchMonth])
 
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) { setItems([]); return }
-
-        const { from, to } = monthRange(year, month)
-
-        // ✅ error도 함께 구조분해
-        const { data, error } = await supabase
-          .from('v_transactions_full')
-          .select('id, date, type, amount, category, description')
-          .eq('user_id', user.id)
-          .gte('date', from)
-          .lte('date', to)
-          .order('date', { ascending: false })
-          .limit(5)
-
-        if (error) throw error
-        setItems(data ?? [])
-      } catch (e) {
-        console.error(e)
-        setItems([])
-      } finally {
-        setLoading(false)
-      }
-    })()
-  }, [year, month])
+  const rows = useMemo(() => {
+    // 기존 limit(5)와 동일한 효과
+    return list.slice(0, 5).map((t) => ({
+      id: t.id,
+      date: t.date,
+      type: t.type,
+      amount: Number(t.amount) || 0,
+      category: t.category,
+      description: t.description,
+    }))
+  }, [list])
 
   return (
     <div className="w-296 overflow-auto mt-10 bg-white rounded-lg flex flex-col">
       <div className="text-lg font-normal mt-4 ml-4">최근 거래</div>
-      {loading ? (
+      {loading && rows.length === 0 ? (
         <div className="p-4 text-sm text-gray-500">불러오는 중…</div>
       ) : (
         <div className="flex flex-col">
-          {items.map((t) => {
-            const signedAmount = t.type === 'income' ? t.amount : -t.amount
+          {rows.map((r) => {
+            const signed = r.type === 'income' ? r.amount : -r.amount
             return (
               <TransactionCard
-                key={t.id}
-                category={t.category}
-                description={t.description}
-                amount={formatWon(signedAmount)}
-                date={t.date}
+                key={r.id}
+                category={r.category}
+                description={r.description}
+                amount={formatWon(signed)}
+                date={r.date}
                 variant="dashboard"
               />
             )
           })}
-          {items.length === 0 && (
+          {rows.length === 0 && (
             <div className="p-4 text-sm text-gray-500">이번 달 거래가 없습니다.</div>
           )}
         </div>
