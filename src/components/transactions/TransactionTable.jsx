@@ -68,7 +68,6 @@ export default function TransactionTable() {
         {transaction.map((t) => (
           <TransactionCard
             key={t.id}
-            title={t.title}
             category={t.category}
             description={t.description}
             amount={formatWon(t.amount)}

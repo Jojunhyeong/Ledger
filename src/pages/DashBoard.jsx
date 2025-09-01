@@ -1,7 +1,9 @@
+import AuthDebug from '@/components/auth/AuthDebug'
 import MonthNavigator from '@/components/dashboard/MonthNavigator'
 import StatCard from '@/components/dashboard/StatCard'
 import TransactionList from '@/components/transactions/TransactionList'
 import { formatWon } from '@/utils/formatCurrency'
+import { useState } from 'react'
 
 export default function DashBoard() {
   const stats = [
@@ -9,10 +11,16 @@ export default function DashBoard() {
     { id: 2, title: '이번 달 지출', amount: '1850000', rate: '+8.3%', type: 'expense' },
     { id: 3, title: '순수입', amount: '1150000', rate: '+15.2%', type: 'net' },
   ]
+  
+  const now = new Date()
+  const [year, setYear] = useState(now.getFullYear())
+  const [month, setMonth] = useState(now.getMonth() + 1)
+
+  const handleChange = (y, m) => {setYear(y); setMonth(m)}
 
   return (
     <div className="flex flex-col items-center">
-      <MonthNavigator />
+      <MonthNavigator year={year} month={month} onChange={handleChange}/>
       <div className="flex gap-10 mt-8">
         {stats.map((stat) => (
           <StatCard
@@ -24,7 +32,8 @@ export default function DashBoard() {
           />
         ))}
       </div>
-      <TransactionList />
+      <TransactionList year={year} month={month}/>
+          <AuthDebug/>
     </div>
   )
 }

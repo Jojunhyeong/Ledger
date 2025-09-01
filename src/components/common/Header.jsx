@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import AuthDebug from '../auth/AuthDebug'
 
 export default function Header() {
   return (
