@@ -44,8 +44,8 @@ export default function TransactionCard({
 
         {isDashboard && <div className="text-sm text-gray-500 text-end">{date}</div>}
       </div>
-       {isTransaction && <div className='min-w-16 ml-8 text-sm'>{account}</div>}
-       {isTransaction && <div className='min-w-24 ml-4 text-sm text-gray-500'>{memo}</div>}
+       {isTransaction && <div className='min-w-16 ml-8 text-sm'>{account ?? '없음'}</div>}
+       {isTransaction && <div className='min-w-24 ml-4 text-sm text-gray-500'>{memo ?? '없음'}</div>}
        {isTransaction && <div>{work}</div>}
     </div>
   )
