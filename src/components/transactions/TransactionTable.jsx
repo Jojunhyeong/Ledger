@@ -11,6 +11,8 @@ export default function TransactionTable() {
   const fetchMonth = useLedgerStore((s) => s.fetchMonth)
   const loading = useLedgerStore((s) => s.loading)
 
+  const deleteTransaction = useLedgerStore((s) => s.deleteTransaction)
+
   const key = `${year}-${pad2(month)}`
   // selector는 원본만 반환 (|| [] 금지). 기본값은 아래에서 처리
   const items = useLedgerStore(useCallback((s) => s.itemsByKey[key], [key]))
@@ -36,6 +38,21 @@ export default function TransactionTable() {
       }
     })
   }, [list])
+
+  const handleDelete = useCallback(
+    async (id, date) => {
+      const ok = window.confirm('이 거래를 삭제할까요?')
+      if (ok) {
+        try {
+          await deleteTransaction({ id, date })
+        } catch (e) {
+          console.error(e)
+          alert('삭제에 실패했습니다.')
+        }
+      }
+    },
+    [deleteTransaction]
+  )
 
   const headers = [
     { key: 'date', label: '날짜', className: 'w-30' },
@@ -73,6 +90,7 @@ export default function TransactionTable() {
               account={r.account}
               memo={r.memo}
               variant="transaction"
+              onDelete={() => handleDelete(r.id, r.date)}
               // work prop이 필요하면 여기에서 전달
             />
           ))

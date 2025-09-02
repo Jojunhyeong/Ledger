@@ -6,7 +6,7 @@ export default function NewTransactionForm() {
 
   // 개별 상태
   const [date, setDate] = useState('2025-09-01') // 'YYYY-MM-DD' 권장
-  const [type, setType] = useState('지출')        // '수입' | '지출' | 'income' | 'expense'
+  const [type, setType] = useState('수입')        // '수입' | '지출' | 'income' | 'expense'
   const [amount, setAmount] = useState('')
   const [categoryName, setCategoryName] = useState('식비')
   const [accountName, setAccountName] = useState('신한카드')
@@ -15,7 +15,7 @@ export default function NewTransactionForm() {
   const [submitting, setSubmitting] = useState(false)
 
   const typeOptions = ['수입', '지출']
-  const categoryOptions = ['식비', '교통비', '생활용품', '카페', '의료비', '쇼핑', '기타']
+  const categoryOptions = ['급여', '식비', '교통비', '생활용품', '카페', '의료비', '쇼핑', '기타']
   const accountOptions = ['신한카드', '체크카드', '급여통장', '적금통장']
 
   const onSave = async () => {

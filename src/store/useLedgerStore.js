@@ -2,15 +2,19 @@ import { create } from 'zustand'
 import { supabase } from '@/lib/supabaseClient'
 
 const pad2 = (n) => String(n).padStart(2, '0')
+
+// ✅ monthRange 되살리기
 const monthRange = (y, m) => {
-  const last = new Date(y, m, 0).getDate()
+  const last = new Date(y, m, 0).getDate()      // m은 1~12 가정, JS Date는 다음달 0일 = 전달 말일
   const ym = `${y}-${pad2(m)}`
   return { from: `${ym}-01`, to: `${ym}-${pad2(last)}` }
 }
+
+// ✅ 방어적인 toDbType
 const toDbType = (t) => {
-  if (t === 'income' || t === 'expense') return t
-  if (t === '수입') return 'income'
-  if (t === '지출') return 'expense'
+  const v = String(t ?? '').trim().toLowerCase()
+  if (v === 'income' || v === '수입') return 'income'
+  if (v === 'expense' || v === '지출') return 'expense'
   throw new Error('type 값이 올바르지 않습니다. (수입/지출 또는 income/expense)')
 }
 
@@ -24,12 +28,22 @@ export const useLedgerStore = create((set, get) => ({
 
   setYearMonth: (y, m) => set({ year: y, month: m }),
 
-  // 이름으로 받아 insert: 계정/카테고리 없으면 생성 → transactions에 기록 → 해당 월 캐시 리프레시
-  addTransactionByNames: async ({ date, type, amount, categoryName, accountName, description, memo }) => {
+  // 이름으로 받아 insert: 계정/카테고리 없으면 생성 → transactions 기록 → 해당 월 캐시 리프레시
+  addTransactionByNames: async ({
+    date,
+    type,          // 폼이 type으로 줄 수도 있고
+    kind,          // kind로 줄 수도 있으니 둘 다 받음
+    amount,
+    categoryName,
+    accountName,
+    description,
+    memo,
+  }) => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('로그인이 필요합니다.')
 
-    const dbType = toDbType(type)
+    // ✅ 둘 중 있는 값으로 판정
+    const dbType = toDbType(kind ?? type)
     const catName = (categoryName ?? '').trim()
     const accName = (accountName ?? '').trim()
     const amt = Number(String(amount).replace(/[^0-9]/g, '')) || 0
@@ -54,12 +68,13 @@ export const useLedgerStore = create((set, get) => ({
       account_id = accIns.id
     }
 
-    // 2) category 찾기 (없으면 생성) — 카테고리에는 type 필요
+    // 2) category 찾기 (없으면 생성) — ✅ categories.kind 사용
     const { data: catRow, error: catSelErr } = await supabase
       .from('categories')
-      .select('id')
+      .select('id, kind')
       .eq('user_id', user.id)
       .eq('name', catName)
+      .eq('kind', dbType)     // 같은 이름이라도 수입/지출 구분
       .maybeSingle()
     if (catSelErr) throw catSelErr
 
@@ -67,7 +82,7 @@ export const useLedgerStore = create((set, get) => ({
     if (!category_id) {
       const { data: catIns, error: catInsErr } = await supabase
         .from('categories')
-        .insert([{ user_id: user.id, name: catName, type: dbType }])
+        .insert([{ user_id: user.id, name: catName, kind: dbType }]) // ✅ kind로 insert
         .select('id')
         .single()
       if (catInsErr) throw catInsErr
@@ -107,7 +122,7 @@ export const useLedgerStore = create((set, get) => ({
         return
       }
 
-      const { from, to } = monthRange(y, m)
+      const { from, to } = monthRange(y, m)   // ✅ 여기서 정상 작동
       const { data, error } = await supabase
         .from('v_transactions_full')
         .select('id, date, type, amount, category, account, description, user_id')
@@ -126,6 +141,26 @@ export const useLedgerStore = create((set, get) => ({
       set((s) => ({ itemsByKey: { ...s.itemsByKey, [key]: [] } }))
     } finally {
       set({ loading: false })
+    }
+  },
+
+  deleteTransaction: async ({ id, date }) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('로그인이 필요합니다.')
+    if (!id) throw new Error('삭제할 id가 없습니다.')
+
+    const { error } = await supabase
+      .from('transactions')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id)
+
+    if (error) throw error
+
+    // 해당 월만 리프레시
+    if (date) {
+      const d = new Date(date)
+      await get().fetchMonth(d.getFullYear(), d.getMonth() + 1, { force: true })
     }
   },
 }))
