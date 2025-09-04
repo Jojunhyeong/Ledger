@@ -1,46 +1,56 @@
-import { useState } from 'react'
-import { useLedgerStore } from '@/store/useLedgerStore'
+import { useEffect, useMemo, useState } from "react"
+import { useLedgerStore } from "@/store/useLedgerStore"
+import { useCategoryStore } from "@/store/useCategoryStore"
+
+const toDbType = (v) => {
+  if (v === "수입" || v === "income") return "income"
+  if (v === "지출" || v === "expense") return "expense"
+  return "expense"
+}
 
 export default function NewTransactionForm() {
-  const addByNames = useLedgerStore((s) => s.addTransactionByNames)
+  const addTx = useLedgerStore((s) => s.addTransaction) // id 기반 저장
+  const { items: categories, fetchAll: fetchCats } = useCategoryStore()
 
-  // 개별 상태
-  const [date, setDate] = useState('2025-09-01') // 'YYYY-MM-DD' 권장
-  const [type, setType] = useState('수입')        // '수입' | '지출' | 'income' | 'expense'
-  const [amount, setAmount] = useState('')
-  const [categoryName, setCategoryName] = useState('식비')
-  const [accountName, setAccountName] = useState('신한카드')
-  const [description, setDescription] = useState('')
-  const [memo, setMemo] = useState('')
+  // form state
+  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
+  const [date, setDate] = useState(today)
+  const [type, setType] = useState("지출")
+  const [amount, setAmount] = useState("")
+  const [categoryId, setCategoryId] = useState("")
+  const [accountName, setAccountName] = useState("신한카드")
+  const [description, setDescription] = useState("")
+  const [memo, setMemo] = useState("")
   const [submitting, setSubmitting] = useState(false)
 
-  const typeOptions = ['수입', '지출']
-  const categoryOptions = ['급여', '식비', '교통비', '생활용품', '카페', '의료비', '쇼핑', '기타']
-  const accountOptions = ['신한카드', '체크카드', '급여통장', '적금통장']
+  // account 고정 옵션 (로컬)
+  const accountOptions = ["신한카드", "체크카드", "급여통장", "적금통장"]
+
+  useEffect(() => { fetchCats() }, [fetchCats])
 
   const onSave = async () => {
-    if (!date) return alert('날짜를 선택하세요.')
-    if (!amount) return alert('금액을 입력하세요.')
-    if (!categoryName) return alert('카테고리를 선택하세요.')
-    if (!accountName) return alert('계정을 선택하세요.')
+    if (!date) return alert("날짜를 선택하세요.")
+    const amt = parseInt(String(amount).replace(/[^\d-]/g, ""), 10) || 0
+    if (!amt) return alert("금액을 입력하세요.")
+    if (!categoryId) return alert("카테고리를 선택하세요.")
+    if (!accountName) return alert("계정을 선택하세요.")
 
     try {
       setSubmitting(true)
-      await addByNames({
+      await addTx({
         date,
-        type,         // ← 스토어에서 '수입/지출' ↔ 'income/expense' 매핑
-        amount,
-        categoryName,
-        accountName,
-        description,
-        memo,
+        type: toDbType(type),
+        amount: amt,
+        category_id: categoryId,   // store에서 가져온 id
+        account_name: accountName, // 임시로 name만 저장
+        description: description?.trim() || null,
+        memo: memo?.trim() || null,
       })
-      alert('저장되었습니다.')
-      // 원한다면 폼 초기화
-      // setAmount(''); setDescription(''); setMemo('')
+      alert("저장되었습니다.")
+      // 초기화 원하면 여기서 setAmount(""), setMemo("") 등
     } catch (e) {
       console.error(e)
-      alert(e?.message || '저장 중 오류가 발생했습니다.')
+      alert(e?.message || "저장 중 오류가 발생했습니다.")
     } finally {
       setSubmitting(false)
     }
@@ -71,7 +81,8 @@ export default function NewTransactionForm() {
               onChange={(e) => setType(e.target.value)}
               className="text-sm border w-88 border-gray-300 rounded-sm p-1.5 font-light"
             >
-              {typeOptions.map((o) => <option key={o} value={o}>{o}</option>)}
+              <option value="수입">수입</option>
+              <option value="지출">지출</option>
             </select>
           </div>
 
@@ -90,20 +101,23 @@ export default function NewTransactionForm() {
         </div>
 
         <div className="flex gap-10">
-          {/* 카테고리 */}
+          {/* 카테고리 (스토어 연동) */}
           <div className="flex flex-col gap-1">
             <label className="text-sm text-gray-500" htmlFor="category">카테고리</label>
             <select
               id="category"
-              value={categoryName}
-              onChange={(e) => setCategoryName(e.target.value)}
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
               className="text-sm border w-88 border-gray-300 rounded-sm p-1.5 font-light"
             >
-              {categoryOptions.map((o) => <option key={o} value={o}>{o}</option>)}
+              <option value="">선택하세요</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
             </select>
           </div>
 
-          {/* 계정 */}
+          {/* 계정 (로컬) */}
           <div className="flex flex-col gap-1">
             <label className="text-sm text-gray-500" htmlFor="account">계정</label>
             <select
@@ -129,7 +143,7 @@ export default function NewTransactionForm() {
           </div>
         </div>
 
-        {/* 설명(선택) */}
+        {/* 설명 */}
         <div className="flex flex-col gap-1 mt-4">
           <label className="text-sm text-gray-500" htmlFor="description">설명</label>
           <input
@@ -141,14 +155,12 @@ export default function NewTransactionForm() {
           />
         </div>
 
+        {/* 버튼 */}
         <div className="flex gap-3 mt-6 justify-end">
           <button
             disabled={submitting}
             className="bg-gray-100 text-sm px-2 py-1 rounded-xs disabled:opacity-50"
-            onClick={() => {
-              // 초기화 예시
-              // setAmount(''); setDescription(''); setMemo('')
-            }}
+            onClick={() => { /* 초기화 로직 원하면 추가 */ }}
           >
             취소
           </button>
@@ -157,7 +169,7 @@ export default function NewTransactionForm() {
             onClick={onSave}
             className="bg-blue-500 text-white text-sm px-2 py-1 rounded-xs disabled:opacity-50"
           >
-            {submitting ? '저장 중…' : '저장'}
+            {submitting ? "저장 중…" : "저장"}
           </button>
         </div>
       </div>
