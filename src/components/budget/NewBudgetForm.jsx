@@ -61,12 +61,12 @@ export default function NewBudgetForm({ open, onClose }) {
         <div className="flex gap-2">
           <button type="button"
             onClick={() => setMode("existing")}
-            className={`px-3 py-1 rounded border ${mode === "existing" ? "bg-gray-200" : ""}`}>
+            className={`px-3 py-1 rounded border border-gray-500 ${mode === "existing" ? "bg-gray-200" : ""}`}>
             기존 카테고리
           </button>
           <button type="button"
             onClick={() => setMode("new")}
-            className={`px-3 py-1 rounded border ${mode === "new" ? "bg-gray-200" : ""}`}>
+            className={`px-3 py-1 rounded border border-gray-500 ${mode === "new" ? "bg-gray-200" : ""}`}>
             새 카테고리
           </button>
         </div>
@@ -75,7 +75,7 @@ export default function NewBudgetForm({ open, onClose }) {
           <div className="flex flex-col gap-1">
             <label className="text-sm">카테고리</label>
             <select
-              className="border rounded p-2"
+              className="border border-gray-500 rounded p-2"
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
             >
@@ -107,14 +107,14 @@ export default function NewBudgetForm({ open, onClose }) {
           <label className="text-sm">예산 금액</label>
           <input
             type="text"
-            className="border rounded p-2"
+            className="border border-gray-500 rounded p-2"
             value={limitAmount}
             onChange={(e) => setLimitAmount(Number(e.target.value || 0))}
             min={0}
           />
         </div>
 
-        <button className="mt-2 h-10 rounded-md bg-black text-white">추가</button>
+        <button className="mt-2 h-10 rounded-md bg-blue-500 text-white">추가</button>
       </form>
     </div>
   )
