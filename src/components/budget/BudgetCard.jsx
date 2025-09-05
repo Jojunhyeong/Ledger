@@ -1,7 +1,7 @@
-import { Utensils } from 'lucide-react'
+import { Trash, Utensils } from 'lucide-react'
 import { formatWon } from '@/utils/formatCurrency'
 
-export default function BudgetCard({ icon: Icon, name, limit, used, remain, pct}) {
+export default function BudgetCard({ icon: Icon, name, limit, used, pct, editable, onDelete}) {
   const isOver = pct > 100
   return (
     <div
@@ -14,6 +14,7 @@ export default function BudgetCard({ icon: Icon, name, limit, used, remain, pct}
         ) : null}
 
         <div>{name}</div>
+        {editable && <Trash onClick={onDelete} className='ml-60 w-4'/>}
       </div>
       <div className=" flex justify-between">
         <div className="text-sm text-gray-500">사용액</div>
