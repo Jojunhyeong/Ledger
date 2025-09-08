@@ -1,31 +1,22 @@
-import { useEffect, useMemo, useCallback } from 'react'
-import { useLedgerStore } from '@/store/useLedgerStore'
-import { formatWon } from '@/utils/formatCurrency'
-import TransactionCard from './TransactionCard'
+import { useEffect, useMemo } from "react"
+import { useLedgerStore } from "@/store/useLedgerStore"
+import { formatWon } from "@/utils/formatCurrency"
+import TransactionCard from "./TransactionCard"
 
 export default function TransactionTable() {
-  const pad2 = (n) => String(n).padStart(2, '0')
-
-  const year = useLedgerStore((s) => s.year)
-  const month = useLedgerStore((s) => s.month)
-  const fetchMonth = useLedgerStore((s) => s.fetchMonth)
+  const fetchAll = useLedgerStore((s) => s.fetchAll)
   const loading = useLedgerStore((s) => s.loading)
-
   const deleteTransaction = useLedgerStore((s) => s.deleteTransaction)
-
-  const key = `${year}-${pad2(month)}`
-  // selector는 원본만 반환 (|| [] 금지). 기본값은 아래에서 처리
-  const items = useLedgerStore(useCallback((s) => s.itemsByKey[key], [key]))
-  const list = items ?? []
+  const list = useLedgerStore((s) => s.itemsAll) ?? []
 
   useEffect(() => {
-    if (year && month) fetchMonth(year, month) // 캐시 있으면 내부에서 스킵
-  }, [year, month, fetchMonth])
+    fetchAll() // 캐시 있으면 내부에서 스킵
+  }, [fetchAll])
 
   const rows = useMemo(() => {
     return list.map((t) => {
       const n = Number(t.amount) || 0
-      const signed = t.type === 'income' ? n : -n // 표시용 부호
+      const signed = t.type === "income" ? n : -n
       return {
         id: t.id,
         date: t.date,
@@ -39,30 +30,22 @@ export default function TransactionTable() {
     })
   }, [list])
 
-  const handleDelete = useCallback(
-    async (id, date) => {
-      const ok = window.confirm('이 거래를 삭제할까요?')
-      if (ok) {
-        try {
-          await deleteTransaction({ id, date })
-        } catch (e) {
-          console.error(e)
-          alert('삭제에 실패했습니다.')
-        }
-      }
-    },
-    [deleteTransaction]
-  )
-
   const headers = [
-    { key: 'date', label: '날짜', className: 'w-30' },
-    { key: 'type', label: '유형', className: 'w-28' },
-    { key: 'category', label: '카테고리', className: 'w-30' },
-    { key: 'amount', label: '금액', className: 'w-28 mr-20 text-right' },
-    { key: 'account', label: '계정', className: 'w-32' },
-    { key: 'memo', label: '메모', className: 'w-32' },
-    { key: 'work', label: '작업', className: 'w-16 text-center' },
+    { key: "date", label: "날짜", className: "w-30" },
+    { key: "type", label: "유형", className: "w-28" },
+    { key: "category", label: "카테고리", className: "w-30" },
+    { key: "amount", label: "금액", className: "w-28 mr-20 text-right" },
+    { key: "account", label: "계정", className: "w-32" },
+    { key: "memo", label: "메모", className: "w-32" },
+    { key: "work", label: "작업", className: "w-16 text-center" },
   ]
+
+  const handleDelete = async (id, date) => {
+    const ok = window.confirm("이 거래를 삭제할까요?")
+    if (!ok) return
+    try { await deleteTransaction({ id, date }) }
+    catch (e) { console.error(e); alert("삭제에 실패했습니다.") }
+  }
 
   return (
     <div className="w-296 overflow-auto mt-10 bg-white rounded-lg flex flex-col border border-gray-200">
@@ -91,7 +74,6 @@ export default function TransactionTable() {
               memo={r.memo}
               variant="transaction"
               onDelete={() => handleDelete(r.id, r.date)}
-              // work prop이 필요하면 여기에서 전달
             />
           ))
         )}
