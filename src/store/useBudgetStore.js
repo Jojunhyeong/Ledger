@@ -38,33 +38,62 @@ export const useBudgetStore = create((set, get) => ({
 
   refresh: async () => get().fetchThisMonth({ force: true }),
 
-  // CREATE (기존 카테고리 선택 or 신규 생성)
-  addBudget: async ({ categoryId, name, icon_key, limit_amount }) => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error("로그인이 필요합니다")
+// src/store/useBudgetStore.js
+addBudget: async ({ categoryId, name, icon_key, limit_amount }) => {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('로그인이 필요합니다')
 
-    let cid = categoryId
-    if (!cid) {
-      // kind NOT NULL이므로 기본 'expense'
-      const { data: cat, error: catErr } = await supabase
-        .from("categories")
-        .insert({ user_id: user.id, name, icon_key, kind: "expense" })
-        .select("id, name, icon_key, kind")
-        .single()
+  let cid = categoryId
+  if (!cid) {
+   // 1) 같은 이름 카테고리가 이미 있으면 재사용
+   const { data: existing } = await supabase
+  .from('categories')
+  .select('id, name, icon_key')
+  .eq('user_id', user.id)
+  .eq('name', name)
+  .maybeSingle()
+  if (existing) {
+    cid = existing.id
+  } else {
+    // 2) 없으면 새로 생성
+   // kind 넣지 않음: 이름 하나로 통일
+  const { data: cat, error: catErr } = await supabase
+    .from('categories')
+    .insert({ user_id: user.id, name, icon_key })
+    .select('id, name, icon_key')
+    .single()
+  if (catErr) {
+    // 유니크 제약에 걸린 동시성/중복 방지: 이미 있으면 다시 조회해서 재사용
+    if (catErr.code === '23505') {
+      const { data: again } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('user_id', user.id).eq('name', name)
+        .maybeSingle()
+      cid = again?.id
+    } else {
+      throw catErr
+    }
+  } else {
+    cid = cat.id
+    useCategoryStore.getState().addLocal(cat)
+  }
       if (catErr) throw catErr
       cid = cat.id
-      // 트랜잭션 폼/다른 곳에 즉시 반영
+      // 전역 카테고리 스토어에 즉시 반영
       useCategoryStore.getState().addLocal(cat)
-    }
+  }
+  }
 
-    const yyyymm = get().yyyymm
-    const { error: budErr } = await supabase
-      .from("budgets")
-      .insert({ user_id: user.id, yyyymm, category_id: cid, limit_amount })
-    if (budErr) throw budErr
+  const yyyymm = get().yyyymm
+  const { error: budErr } = await supabase
+    .from('budgets')
+    .insert({ user_id: user.id, yyyymm, category_id: cid, limit_amount })
+  if (budErr) throw budErr
 
-    await get().refresh()
-  },
+  await get().refresh()
+},
+
 
   // UPDATE
   updateBudget: async (id, { limit_amount }) => {
