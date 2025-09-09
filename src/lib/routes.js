@@ -3,5 +3,7 @@ export const ROUTES = {
     DASHBOARD: '/dashboard',
     PREVIEW: '/preview',
     TRANSACTION: '/transaction',
-    BUDGET: '/budget'
+    BUDGET: '/budget',
+    SIGNIN: '/signin',
+    SIGNUP: '/signup'
 }
