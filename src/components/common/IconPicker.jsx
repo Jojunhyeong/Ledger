@@ -1,9 +1,8 @@
 import { ICONS, ICON_OPTIONS } from "@/constants/iconRegistry"
 
-export default function IconPicker({ value, onChange, label = "아이콘" }) {
+export default function IconPicker({ value, onChange}) {
   return (
     <div className="space-y-1">
-      <p className="text-sm font-medium">{label}</p>
       <div className="flex flex-wrap gap-2">
         {ICON_OPTIONS.map((opt) => {
           const Icon = ICONS[opt.key]
