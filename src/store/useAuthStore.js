@@ -5,26 +5,65 @@ import { useBudgetStore } from "./useBudgetStore";
 import { useCategoryStore } from "./useCategoryStore";
 import { useLedgerStore } from "./useLedgerStore";
 
+/** 신규 유저 기본 카테고리 시딩 (count 기반 확인) */
+async function seedDefaultCategories(userId) {
+  // 현재 유저 카테고리 개수만 빠르게 확인 (head 모드 → count만 옴)
+  const { count, error: countErr } = await supabase
+    .from("categories")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId);
+
+  if (countErr) {
+    console.warn("[seedDefaultCategories] count error:", countErr);
+    return;
+  }
+
+  if ((count ?? 0) === 0) {
+    const defaults = [
+      { user_id: userId, name: "급여",   icon_key: "wallet",   kind: "income"  },
+      { user_id: userId, name: "식비",   icon_key: "utensils", kind: "expense" },
+      { user_id: userId, name: "교통비", icon_key: "tram",     kind: "expense" },
+      { user_id: userId, name: "생활비", icon_key: "cart",     kind: "expense" },
+    ];
+
+    const { error: insErr } = await supabase.from("categories").insert(defaults);
+    if (insErr) {
+      console.warn("[seedDefaultCategories] insert error:", insErr);
+    } else {
+      // 카테고리 스토어 즉시 동기화(있으면)
+      try {
+        await useCategoryStore.getState().refresh?.();
+      } catch (_) {}
+    }
+  }
+}
+
+/** 프로필 보장 + (없을 때) 기본 카테고리 시딩 */
 async function ensureProfile() {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: userErr,
+  } = await supabase.auth.getUser();
+  if (userErr) {
+    console.error("[ensureProfile] getUser error:", userErr);
+    return;
+  }
   if (!user) return;
 
-  // 로그인된 uid로 profiles 한 줄은 반드시 존재하도록 보장
+  // 1) profiles 보장
   const username =
-    user.user_metadata?.full_name ??
-    user.email?.split("@")[0] ??
-    "user";
+    user.user_metadata?.full_name ?? user.email?.split("@")[0] ?? "user";
 
-  const { error } = await supabase
+  const { error: profErr } = await supabase
     .from("profiles")
-    .upsert(
-      { id: user.id, name: username },   // 필요한 컬럼만
-      { onConflict: "id" }
-    );
-  if (error) {
-    // 프로필 RLS가 있으면 WITH CHECK (id = auth.uid()) 인지 확인
-    console.error("[ensureProfile] upsert error", error);
+    .upsert({ id: user.id, name: username }, { onConflict: "id" });
+  if (profErr) {
+    console.error("[ensureProfile] profiles upsert error:", profErr);
+    return; // 프로필 실패 시 시딩은 생략
   }
+
+  // 2) 기본 카테고리 시딩
+  await seedDefaultCategories(user.id);
 }
 
 export const useAuthStore = create((set, get) => ({
@@ -41,43 +80,49 @@ export const useAuthStore = create((set, get) => ({
     set({ _started: true });
 
     // 1) 초기 세션 반영
-    const { data } = await supabase.auth.getSession();
+    const { data, error } = await supabase.auth.getSession();
+    if (error) {
+      console.error("[auth.init] getSession error:", error);
+    }
     set({
-      session: data.session,
-      user: data.session?.user ?? null,
+      session: data?.session ?? null,
+      user: data?.session?.user ?? null,
       loading: false,
     });
 
-    // ★ 초기에도 프로필 보장 (새 탭/새로고침 대비)
-    if (data.session?.user) {
-      await ensureProfile(); // ✅ 여기 추가
+    // 초기 진입 시에도 프로필/기본 카테고리 보장
+    if (data?.session?.user) {
+      await ensureProfile();
     }
 
     // 2) 인증 이벤트 전역 구독
-    const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
-      set({ session, user: session?.user ?? null });
+    const { data: sub } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        set({ session, user: session?.user ?? null });
 
-      if (event === "SIGNED_IN") {
-        // ★ 로그인 직후 프로필 보장
-        await ensureProfile(); // ✅ 여기 추가
+        if (event === "SIGNED_IN") {
+          // 로그인 직후 보장 & 시딩
+          await ensureProfile();
 
-        // 로그인 시 전역 리프레시
-        await Promise.allSettled([
-          useBudgetStore.getState().refresh?.(),
-          useCategoryStore.getState().refresh?.(),
-          useLedgerStore.getState()?.refresh?.(),
-        ]);
-      } else if (event === "SIGNED_OUT") {
-        // 로그아웃 시 전역 초기화
-        useBudgetStore.setState({ items: [] });
-        useCategoryStore.setState({ items: [] });
-        useLedgerStore.setState?.({ items: [] });
+          // 전역 데이터 병렬 리프레시
+          await Promise.allSettled([
+            useBudgetStore.getState().refresh?.(),
+            useCategoryStore.getState().refresh?.(),
+            useLedgerStore.getState()?.refresh?.(),
+          ]);
+        } else if (event === "SIGNED_OUT") {
+          // 로그아웃 시 전역 초기화
+          useBudgetStore.setState({ items: [] });
+          useCategoryStore.setState({ items: [] });
+          useLedgerStore.setState?.({ items: [] });
+        }
       }
-    });
+    );
 
     set({ _unsub: () => sub.subscription.unsubscribe() });
   },
 
+  // (선택) 정리
   cleanup() {
     const { _unsub } = get();
     if (_unsub) _unsub();
@@ -89,15 +134,13 @@ export const useAuthStore = create((set, get) => ({
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { full_name: name },
-      },
+      options: { data: { full_name: name } },
     });
     if (error) throw error;
 
-    // 이메일 인증 OFF 환경이라면 여기서도 보장 가능
+    // 이메일 인증 OFF 환경이면 즉시 세션 존재 → 안전하게 보장
     if (data.session?.user) {
-      await ensureProfile(); // (안전)
+      await ensureProfile();
     }
     return { needsConfirm: !data.session };
   },
