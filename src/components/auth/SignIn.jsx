@@ -15,6 +15,7 @@ export default function SignIn() {
   const handleSignIn = async () => {
     setLoading(true);
     setMsg("");
+    if(loading) return;
     try {
       await signIn(email, pw); 
        navigate("/dashboard"); // 성공 시 이동
