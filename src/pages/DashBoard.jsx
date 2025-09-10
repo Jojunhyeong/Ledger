@@ -1,6 +1,5 @@
 // /src/pages/DashBoard.jsx
 import { useCallback, useEffect, useMemo } from 'react'
-import AuthDebug from '@/components/auth/AuthDebug'
 import MonthNavigator from '@/components/dashboard/MonthNavigator'
 import StatCard from '@/components/dashboard/StatCard'
 import TransactionList from '@/components/transactions/TransactionList'
@@ -95,7 +94,6 @@ export default function DashBoard() {
       {/* 최근 거래 5건 */}
       <TransactionList year={year} month={month} />
 
-      <AuthDebug />
     </div>
   )
 }
