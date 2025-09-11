@@ -17,7 +17,7 @@ export default function TransactionCard({
 
   return (
     <div
-      className={`items-center flex gap-24 border-b ${isDashboard && 'justify-between'} border-gray-100 ${isDashboard ? 'p-6' : 'p-4'}`}
+      className={`items-center flex md:gap-220 gap-6 border-b ${isDashboard && 'justify-between'} border-gray-100 ${isDashboard ? 'md:p-6 py-3 px-7' : 'p-4'}`}
     >
       {isTransaction && <div className="text-sm text-gray-500">{date}</div>}
 
@@ -30,7 +30,7 @@ export default function TransactionCard({
 
         <div className="flex flex-col">
           <div>{title}</div>
-          <div className="text-sm text-gray-500 ml-10 w-16">{category}</div>
+          <div className="text-sm text-gray-500 md:ml-10 ml-6 w-16">{category}</div>
         </div>
       </div>
       <div className="flex flex-col">
@@ -42,7 +42,7 @@ export default function TransactionCard({
           {amount}원
         </div>
 
-        {isDashboard && <div className="text-sm text-gray-500 text-end">{date}</div>}
+        {isDashboard && <div className="text-xs md:text-sm text-gray-500 text-end">{date}</div>}
       </div>
       {isTransaction && <div className="min-w-16 ml-8 text-sm">{account ?? '없음'}</div>}
       {isTransaction && <div className="min-w-21 ml-4 text-sm text-gray-500">{memo ?? '없음'}</div>}

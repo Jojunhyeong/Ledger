@@ -24,7 +24,7 @@ export default function NewTransactionForm() {
   const [submitting, setSubmitting] = useState(false)
 
   // account 고정 옵션 (로컬)
-  const accountOptions = ['신한카드', '체크카드', '급여통장', '적금통장']
+  const accountOptions = ['신용카드', '체크카드', '급여통장', '적금통장']
 
   useEffect(() => {
     fetchCats()

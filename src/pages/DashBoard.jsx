@@ -78,7 +78,7 @@ export default function DashBoard() {
         onChange={(y, m) => setYearMonth(y, m)}
       />
 
-      <div className="flex gap-10 mt-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 md:gap-10 gap-4 md:mt-8 mt-4">
         {stats.map((s) => (
           <StatCard
             key={s.id}
