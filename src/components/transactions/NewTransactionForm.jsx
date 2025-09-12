@@ -9,7 +9,7 @@ const toDbType = (v) => {
 }
 
 export default function NewTransactionForm() {
-  const addTx = useLedgerStore((s) => s.addTransactionByNames) // id 기반 저장
+  const addTx = useLedgerStore((s) => s.addTransactionByNames)
   const { items: categories, fetchAll: fetchCats } = useCategoryStore()
 
   // form state
@@ -19,11 +19,9 @@ export default function NewTransactionForm() {
   const [amount, setAmount] = useState('')
   const [categoryId, setCategoryId] = useState('')
   const [accountName, setAccountName] = useState('신한카드')
-  const [description, setDescription] = useState('')
   const [memo, setMemo] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  // account 고정 옵션 (로컬)
   const accountOptions = ['신용카드', '체크카드', '급여통장', '적금통장']
 
   useEffect(() => {
@@ -41,15 +39,13 @@ export default function NewTransactionForm() {
       setSubmitting(true)
       await addTx({
         date,
-        type: toDbType(type), // 'income' | 'expense'
+        type: toDbType(type),
         amount: amt,
-        categoryName: categories.find((c) => c.id === categoryId)?.name || '', // ← byNames가 요구
-        accountName, // 로컬 드롭다운
-        description: description?.trim() || null,
+        categoryName: categories.find((c) => c.id === categoryId)?.name || '',
+        accountName,
         memo: memo?.trim() || null,
       })
       alert('저장되었습니다.')
-      // 초기화 원하면 여기서 setAmount(""), setMemo("") 등
     } catch (e) {
       console.error(e)
       alert(e?.message || '저장 중 오류가 발생했습니다.')
@@ -60,32 +56,30 @@ export default function NewTransactionForm() {
 
   return (
     <div className="flex flex-col">
-      <div className="bg-white w-296 mt-6 rounded-lg p-6">
-        <div className="flex gap-10 mb-8">
+      <div className="bg-white px-5 md:px-5 mt-6 rounded-lg py-6">
+
+        {/* ✅ grid 버전: md부터 3열, 모바일은 2열 */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-10 mb-8">
           {/* 날짜 */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-500" htmlFor="date">
-              날짜
-            </label>
+            <label className="text-sm text-gray-500" htmlFor="date">날짜</label>
             <input
               id="date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="text-sm border w-88 border-gray-300 rounded-sm p-1.5 font-light"
+              className="text-sm border border-gray-300 rounded-sm p-1.5 font-light w-40 md:w-88"
             />
           </div>
 
           {/* 유형 */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-500" htmlFor="type">
-              유형
-            </label>
+            <label className="text-sm text-gray-500" htmlFor="type">유형</label>
             <select
               id="type"
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className="text-sm border w-88 border-gray-300 rounded-sm p-1.5 font-light"
+              className="text-sm border border-gray-300 rounded-sm p-1.5 font-light w-40 md:w-88"
             >
               <option value="수입">수입</option>
               <option value="지출">지출</option>
@@ -94,87 +88,59 @@ export default function NewTransactionForm() {
 
           {/* 금액 */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-500" htmlFor="amount">
-              금액
-            </label>
+            <label className="text-sm text-gray-500" htmlFor="amount">금액</label>
             <input
               id="amount"
               inputMode="numeric"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="금액을 입력하세요"
-              className="border w-88 border-gray-300 rounded-sm p-1 placeholder:text-sm placeholder:font-light placeholder:pl-1.5"
+              className="border border-gray-300 rounded-sm p-1 placeholder:text-sm placeholder:font-light placeholder:pl-1.5 w-40 md:w-88"
             />
           </div>
-        </div>
 
-        <div className="flex gap-10">
-          {/* 카테고리 (스토어 연동) */}
+          {/* 카테고리 */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-500" htmlFor="category">
-              카테고리
-            </label>
+            <label className="text-sm text-gray-500" htmlFor="category">카테고리</label>
             <select
               id="category"
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
-              className="text-sm border w-88 border-gray-300 rounded-sm p-1.5 font-light"
+              className="text-sm border border-gray-300 rounded-sm p-1.5 font-light w-40 md:w-88"
             >
               <option value="">선택하세요</option>
               {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
+                <option key={c.id} value={c.id}>{c.name}</option>
               ))}
             </select>
           </div>
 
-          {/* 계정 (로컬) */}
+          {/* 계정 */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-500" htmlFor="account">
-              계정
-            </label>
+            <label className="text-sm text-gray-500" htmlFor="account">계정</label>
             <select
               id="account"
               value={accountName}
               onChange={(e) => setAccountName(e.target.value)}
-              className="text-sm border w-88 border-gray-300 rounded-sm p-1.5 font-light"
+              className="text-sm border border-gray-300 rounded-sm p-1.5 font-light w-40 md:w-88"
             >
               {accountOptions.map((o) => (
-                <option key={o} value={o}>
-                  {o}
-                </option>
+                <option key={o} value={o}>{o}</option>
               ))}
             </select>
           </div>
 
           {/* 메모 */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-500" htmlFor="memo">
-              메모
-            </label>
+            <label className="text-sm text-gray-500" htmlFor="memo">메모</label>
             <input
               id="memo"
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
               placeholder="메모를 입력하세요"
-              className="border w-88 border-gray-300 rounded-sm p-1 placeholder:text-sm placeholder:font-light placeholder:pl-1.5"
+              className="border border-gray-300 rounded-sm p-1 placeholder:text-sm placeholder:font-light placeholder:pl-1.5 w-40 md:w-88"
             />
           </div>
-        </div>
-
-        {/* 설명 */}
-        <div className="flex flex-col gap-1 mt-4">
-          <label className="text-sm text-gray-500" htmlFor="description">
-            설명
-          </label>
-          <input
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="설명을 입력하세요"
-            className="border w-full border-gray-300 rounded-sm p-1 placeholder:text-sm placeholder:font-light placeholder:pl-1.5"
-          />
         </div>
 
         {/* 버튼 */}
@@ -182,9 +148,6 @@ export default function NewTransactionForm() {
           <button
             disabled={submitting}
             className="bg-gray-100 text-sm px-2 py-1 rounded-xs disabled:opacity-50"
-            onClick={() => {
-              /* 초기화 로직 원하면 추가 */
-            }}
           >
             취소
           </button>

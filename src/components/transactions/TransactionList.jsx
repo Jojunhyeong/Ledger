@@ -28,7 +28,6 @@ export default function TransactionList() {
       type: t.type,
       amount: Number(t.amount) || 0,
       category: t.category,
-      description: t.description,
     }))
   }, [list])
 
@@ -45,7 +44,7 @@ export default function TransactionList() {
               <TransactionCard
                 key={r.id}
                 category={r.category}
-                description={r.description}
+           
                 amount={formatWon(signed)}
                 date={r.date}
                 variant="dashboard"

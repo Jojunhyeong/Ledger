@@ -23,7 +23,7 @@ export default function TransactionTable() {
         type: t.type,
         amount: signed,
         category: t.category,
-        description: t.description,
+     
         memo: t.memo,
         account: t.account,
       }
@@ -31,7 +31,7 @@ export default function TransactionTable() {
   }, [list])
 
   const headers = [
-    { key: "date", label: "날짜", className: "w-30" },
+    { key: "date", label: "날짜", className: "w-30 ml-6" },
     { key: "type", label: "유형", className: "w-28" },
     { key: "category", label: "카테고리", className: "w-30" },
     { key: "amount", label: "금액", className: "w-28 mr-20 text-right" },
@@ -48,11 +48,11 @@ export default function TransactionTable() {
   }
 
   return (
-    <div className="w-296 overflow-auto mt-10 bg-white rounded-lg flex flex-col border border-gray-200">
+    <div className="md:px-3  overflow-auto mt-10 bg-white rounded-lg flex  flex-col border border-gray-200">
       <div className="text-lg font-normal mt-4 ml-4 mb-4">거래 내역</div>
 
       <div className="flex flex-col">
-        <div className="flex bg-gray-100 gap-12">
+        <div className="md:flex bg-gray-100 md:gap-11 hidden">
           {headers.map((h) => (
             <div key={h.key} className={`${h.className} px-4 py-2`}>
               {h.label}
@@ -67,7 +67,7 @@ export default function TransactionTable() {
             <TransactionCard
               key={r.id}
               category={r.category}
-              description={r.description}
+        
               amount={formatWon(r.amount)}
               date={r.date}
               account={r.account}

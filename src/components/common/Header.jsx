@@ -18,13 +18,19 @@ export default function Header() {
         </div>
       </div>
 
+      {/* 모바일 전용 헤더 (위쪽) */}
+      <div className="flex md:hidden w-full fixed top-0 bg-white justify-center items-center pt-4 pb-4">
+        <div className="text-xl ">가계부</div>
+      </div>
+
+
       {/* 모바일 전용 헤더 (아래쪽 탭바 느낌) */}
       <div className="md:hidden fixed bottom-0 w-full bg-white shadow-black flex justify-around items-center h-14">
         <Link to="/transaction" className="text-sm text-gray-500">거래</Link>
         <Link to="/budget" className="text-sm text-gray-500">예산</Link>
          <Link to="/dashboard" className="text-sm text-blue-500">대시보드</Link>
         <Link to="/settings" className="text-sm text-gray-500">설정</Link>
-        <button onClick={signOut} className="text-red-500 text-sm">로그아웃</button>
+        <Link onClick={signOut} className="text-red-500 text-sm">로그아웃</Link>
       </div>
     </>
   )

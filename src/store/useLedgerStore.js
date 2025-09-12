@@ -42,7 +42,7 @@ export const useLedgerStore = create((set, get) => ({
 
       const { data, error } = await supabase
         .from("v_transactions_full")
-        .select("id, date, type, amount, category, account, description, memo, user_id")
+        .select("id, date, type, amount, category, account,  memo, user_id")
         .eq("user_id", user.id)
         .order("date", { ascending: false }) // 최신 날짜 먼저
         .order("id", { ascending: false })    // 같은 날짜에서 최근 입력 우선
@@ -73,7 +73,7 @@ export const useLedgerStore = create((set, get) => ({
       const { from, to } = monthRange(y, m)
       const { data, error } = await supabase
         .from("v_transactions_full")
-        .select("id, date, type, amount, category, account, description, memo, user_id")
+        .select("id, date, type, amount, category, account, memo, user_id")
         .eq("user_id", user.id)
         .gte("date", from)
         .lte("date", to)
@@ -97,7 +97,7 @@ export const useLedgerStore = create((set, get) => ({
    * (카테고리는 이름 하나로 통일 – kind 사용 안 함)
    */
   addTransactionByNames: async ({
-    date, type, kind, amount, categoryName, accountName, description, memo,
+    date, type, kind, amount, categoryName, accountName, memo,
   }) => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error("로그인이 필요합니다.")
@@ -159,7 +159,7 @@ export const useLedgerStore = create((set, get) => ({
         amount: amt,        // 항상 양수
         category_id,
         account_id,
-        description: (description ?? "").trim() || null,
+
         memo: (memo ?? "").trim() || null,
       }])
     if (insErr) throw insErr

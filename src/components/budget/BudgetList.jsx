@@ -23,7 +23,7 @@ export default function BudgetList({editable}) {
 
 
   return (
-    <div className="w-296 mx-auto mt-6 grid grid-cols-3 gap-6">
+    <div className="md:w-296 w-96 mx-auto mt-6 grid-cols-1 grid md:grid-cols-3 gap-6">
       {items.map((b) => {
         const { remain, pct } = calcBudget(b.limit_amount, b.used_amount)
         return (

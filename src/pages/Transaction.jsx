@@ -5,8 +5,8 @@ import TransactionTable from "@/components/transactions/TransactionTable";
 
 export default function Transaction() {
     return(
-        <div className="flex flex-col items-center">
-            <FiltersBar/>
+        <div className="flex flex-col items-center md:mt-0 mt-14">
+            {/* <FiltersBar/> */}
             <NewTransactionForm/>
             <TransactionTable/>
     </div>

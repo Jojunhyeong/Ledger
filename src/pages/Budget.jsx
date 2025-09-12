@@ -10,7 +10,7 @@ export default function Budget() {
   return (
 
     <div>
-      <div className="flex justify-between w-296 mx-auto mt-6">
+      <div className="flex justify-between md:w-296 md:mx-auto md:px-0 md:pt-6 pt-20 px-6">
         <div className="text-2xl font-semibold">예산관리</div>
         <div className='flex gap-2'>
           <button onClick={() => setOpen(true)} className="bg-blue-500 text-white text-sm px-2.5 py-1.5 rounded-xs">

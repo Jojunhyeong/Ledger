@@ -5,7 +5,7 @@ export default function BudgetCard({ icon: Icon, name, limit, used, pct, editabl
   const isOver = pct > 100
   return (
     <div
-      className={`rounded-lg  w-95  p-5 flex flex-col gap-3 ${isOver ? 'bg-red-100  border border-red-300 ' : 'bg-white border-white'}`}
+      className={`rounded-lg  p-6 md:p-6 flex flex-col gap-3 ${isOver ? 'bg-red-100  border border-red-300 ' : 'bg-white border-white'}`}
     >
       <div className="flex gap-3 items-center">
         {Icon ? (
@@ -13,8 +13,8 @@ export default function BudgetCard({ icon: Icon, name, limit, used, pct, editabl
             className={`w-8 h-8 rounded-sm p-1.5 ${isOver ? 'bg-red-200 text-red-500 ' : 'bg-blue-100 text-blue-500 '}`} />
         ) : null}
 
-        <div>{name}</div>
-        {editable && <Trash onClick={onDelete} className='ml-60 w-4'/>}
+        <div className='whitespace-nowrap w-10'>{name}</div>
+        {editable && <Trash onClick={onDelete} className='ml-56 md:ml-54 w-4'/>}
       </div>
       <div className=" flex justify-between">
         <div className="text-sm text-gray-500">사용액</div>
