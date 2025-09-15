@@ -13,7 +13,7 @@ export default function Header() {
           <Link to="/dashboard" className="text-sm underline underline-offset-8 decoration-2 text-blue-500">대시보드</Link>
           <Link to="/transaction" className="text-sm text-gray-500">거래</Link>
           <Link to="/budget" className="text-sm text-gray-500">예산</Link>
-          <Link to="" className="text-sm text-gray-500">설정</Link>
+          {/* <Link to="" className="text-sm text-gray-500">설정</Link> */}
           <Link to="/signin" onClick={signOut} className="text-red-500">로그아웃</Link>
         </div>
       </div>
@@ -26,10 +26,10 @@ export default function Header() {
 
       {/* 모바일 전용 헤더 (아래쪽 탭바 느낌) */}
       <div className="md:hidden fixed bottom-0 w-full bg-white shadow-black flex justify-around items-center h-14">
+             <Link to="/dashboard" className="text-sm text-blue-500">대시보드</Link>
         <Link to="/transaction" className="text-sm text-gray-500">거래</Link>
         <Link to="/budget" className="text-sm text-gray-500">예산</Link>
-         <Link to="/dashboard" className="text-sm text-blue-500">대시보드</Link>
-        <Link to="/settings" className="text-sm text-gray-500">설정</Link>
+        {/* <Link to="/settings" className="text-sm text-gray-500">설정</Link> */}
         <Link onClick={signOut} className="text-red-500 text-sm">로그아웃</Link>
       </div>
     </>
