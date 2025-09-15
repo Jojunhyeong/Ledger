@@ -55,8 +55,8 @@ export default function NewTransactionForm() {
   }
 
   return (
-    <div className="flex flex-col">
-      <div className="bg-white px-5 md:px-5 mt-6 rounded-lg py-6">
+    <div className="flex flex-col px-4 md:px-0 md:w-295">
+      <div className="bg-white mt-6 rounded-lg p-5 md:p-6">
 
         {/* ✅ grid 버전: md부터 3열, 모바일은 2열 */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-10 mb-8">
@@ -68,7 +68,7 @@ export default function NewTransactionForm() {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="text-sm border border-gray-300 rounded-sm p-1.5 font-light w-40 md:w-88"
+              className="text-sm border border-gray-300 rounded-sm p-1.5 font-light min-w-0 md:min-w-0"
             />
           </div>
 
@@ -79,7 +79,7 @@ export default function NewTransactionForm() {
               id="type"
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className="text-sm border border-gray-300 rounded-sm p-1.5 font-light w-40 md:w-88"
+              className="text-sm border border-gray-300 rounded-sm p-1.5 font-light min-w-0 md:min-w-0"
             >
               <option value="수입">수입</option>
               <option value="지출">지출</option>
@@ -95,7 +95,7 @@ export default function NewTransactionForm() {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="금액을 입력하세요"
-              className="border border-gray-300 rounded-sm p-1 placeholder:text-sm placeholder:font-light placeholder:pl-1.5 w-40 md:w-88"
+              className="border border-gray-300 rounded-sm p-1 placeholder:text-sm placeholder:font-light placeholder:pl-1.5 min-w-0 md:min-w-0"
             />
           </div>
 
@@ -106,7 +106,7 @@ export default function NewTransactionForm() {
               id="category"
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
-              className="text-sm border border-gray-300 rounded-sm p-1.5 font-light w-40 md:w-88"
+              className="text-sm border border-gray-300 rounded-sm p-1.5 font-light min-w-0 md:min-w-0"
             >
               <option value="">선택하세요</option>
               {categories.map((c) => (
@@ -122,7 +122,7 @@ export default function NewTransactionForm() {
               id="account"
               value={accountName}
               onChange={(e) => setAccountName(e.target.value)}
-              className="text-sm border border-gray-300 rounded-sm p-1.5 font-light w-40 md:w-88"
+              className="text-sm border border-gray-300 rounded-sm p-1.5 font-light min-w-0 md:min-w-0"
             >
               {accountOptions.map((o) => (
                 <option key={o} value={o}>{o}</option>
@@ -138,7 +138,7 @@ export default function NewTransactionForm() {
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
               placeholder="메모를 입력하세요"
-              className="border border-gray-300 rounded-sm p-1 placeholder:text-sm placeholder:font-light placeholder:pl-1.5 w-40 md:w-88"
+              className="border border-gray-300 rounded-sm p-1 placeholder:text-sm placeholder:font-light placeholder:pl-1.5 min-w-0 md:min-w-0"
             />
           </div>
         </div>
