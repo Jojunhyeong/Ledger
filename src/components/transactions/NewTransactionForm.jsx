@@ -159,22 +159,31 @@ export default function NewTransactionForm() {
         </div>
 
         {/* 버튼 */}
-        <div className="flex gap-3 mt-6 justify-end">
+        <div className="flex justify-between gap-6">
+          <div className='flex gap-3 md:hidden'>
+          <div>💡</div>
+          <div className='text-xs text-gray-500'> 새로운 카테고리는 예산에서 추가할 수 있어요.</div>
+          </div>
+          <div className='md:flex hidden'>
+          <div className='text-xs text-gray-500'> 💡 새로운 카테고리는 예산에서 추가할 수 있어요. (추가하면 여기서도 바로 선택 가능해요) </div>
+          </div>
+          <div className='gap-3 flex'>
           <button
             disabled={submitting}
-            className="bg-gray-100 text-sm px-2 py-1 rounded-xs disabled:opacity-50"
+            className="bg-gray-100 text-sm px-2 py-1 rounded-xs disabled:opacity-50 whitespace-nowrap h-7"
           >
             취소
           </button>
           <button
             disabled={submitting}
             onClick={onSave}
-            className="bg-blue-500 text-white text-sm px-2 py-1 rounded-xs disabled:opacity-50"
+            className="bg-blue-500 text-white text-sm px-2 py-1 rounded-xs disabled:opacity-50 whitespace-nowrap h-7"
           >
             {submitting ? '저장 중…' : '저장'}
           </button>
         </div>
       </div>
+    </div>
     </div>
   )
 }
