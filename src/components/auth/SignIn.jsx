@@ -34,7 +34,7 @@ export default function SignIn() {
         <div className="flex flex-col items-center px-6 pb-10 border rounded-2xl shadow-2xl border-gray-50 bg-gray-50">
           <img
             className="w-16 mt-10 bg-blue-100 rounded-full"
-            src="/public/moneyplan.png"
+            src="/moneyplan.png"
             alt=""
           />
           <div className="mt-4 text-2xl font-semibold">가계부</div>
