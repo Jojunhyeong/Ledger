@@ -69,6 +69,8 @@ export const useBudgetStore = create((set, get) => ({
     if (userErr) throw userErr;
     if (!user) throw new Error("로그인이 필요합니다");
 
+    await supabase.from('profiles').upsert({ id: user.id }, { onConflict: 'id' });
+
     let cid = categoryId;
 
     // 1) 카테고리 upsert (user_id 반드시 포함!)
