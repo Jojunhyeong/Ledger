@@ -12,7 +12,7 @@ export default function NewBudgetForm({ open, onClose }) {
   const [categoryId, setCategoryId] = useState('')
   const [name, setName] = useState('')
   const [iconKey, setIconKey] = useState('')
-  const [limitAmount, setLimitAmount] = useState(0)
+  const [limitAmount, setLimitAmount] = useState('')
 
   useEffect(() => {
     fetchAll()
@@ -48,7 +48,7 @@ export default function NewBudgetForm({ open, onClose }) {
     setCategoryId('')
     setName('')
     setIconKey('')
-    setLimitAmount(0)
+    setLimitAmount('')
     onClose?.()
   }
 
@@ -62,7 +62,7 @@ export default function NewBudgetForm({ open, onClose }) {
         <button
           type="button"
           aria-label="닫기"
-          onClick={onClose}
+          onClick={resetAndClose}
           className="absolute right-2 top-2 p-3 rounded hover:bg-gray-100"
         >
           <X size={18} />
@@ -129,8 +129,8 @@ export default function NewBudgetForm({ open, onClose }) {
               type="text"
               className="border border-gray-400 rounded p-2"
               value={limitAmount}
-              onChange={(e) => setLimitAmount(Number(e.target.value || 0))}
-              min={0}
+              onChange={(e) => setLimitAmount(Number(e.target.value || ''))}
+              
             />
           </div>
 
