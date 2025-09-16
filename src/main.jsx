@@ -5,9 +5,11 @@ import App from './App.jsx'
 import AppRoutes from './router'
 import { BrowserRouter } from 'react-router-dom'
 import { useAuthStore } from './store/useAuthStore'
+import ScrollToTop from './components/common/ScrollToTop'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <ScrollToTop/>
       <BrowserRouter>
         <AppRoutes/>
       </BrowserRouter>
