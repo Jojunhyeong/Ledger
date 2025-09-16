@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useCallback } from 'react'
-import { useLedgerStore } from '@/store/useLedgerStore'
+import { useLedgerStore } from '@/store/useTransactionStore'
 import TransactionCard from './TransactionCard'
 import { formatWon } from '@/utils/formatCurrency'
 
@@ -44,7 +44,6 @@ export default function TransactionList() {
               <TransactionCard
                 key={r.id}
                 category={r.category}
-           
                 amount={formatWon(signed)}
                 date={r.date}
                 variant="dashboard"

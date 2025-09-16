@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useLedgerStore } from '@/store/useLedgerStore'
+import { useLedgerStore } from '@/store/useTransactionStore'
 import { useCategoryStore } from '@/store/useCategoryStore'
 
 const toDbType = (v) => {
@@ -57,12 +57,13 @@ export default function NewTransactionForm() {
   return (
     <div className="flex flex-col px-4 md:px-0 md:w-295">
       <div className="bg-white mt-6 rounded-lg p-5 md:p-6">
-
         {/* ✅ grid 버전: md부터 3열, 모바일은 2열 */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-10 mb-8">
           {/* 날짜 */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-500" htmlFor="date">날짜</label>
+            <label className="text-sm text-gray-500" htmlFor="date">
+              날짜
+            </label>
             <input
               id="date"
               type="date"
@@ -74,7 +75,9 @@ export default function NewTransactionForm() {
 
           {/* 유형 */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-500" htmlFor="type">유형</label>
+            <label className="text-sm text-gray-500" htmlFor="type">
+              유형
+            </label>
             <select
               id="type"
               value={type}
@@ -88,7 +91,9 @@ export default function NewTransactionForm() {
 
           {/* 금액 */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-500" htmlFor="amount">금액</label>
+            <label className="text-sm text-gray-500" htmlFor="amount">
+              금액
+            </label>
             <input
               id="amount"
               inputMode="numeric"
@@ -101,7 +106,9 @@ export default function NewTransactionForm() {
 
           {/* 카테고리 */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-500" htmlFor="category">카테고리</label>
+            <label className="text-sm text-gray-500" htmlFor="category">
+              카테고리
+            </label>
             <select
               id="category"
               value={categoryId}
@@ -110,14 +117,18 @@ export default function NewTransactionForm() {
             >
               <option value="">선택하세요</option>
               {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
               ))}
             </select>
           </div>
 
           {/* 계정 */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-500" htmlFor="account">계정</label>
+            <label className="text-sm text-gray-500" htmlFor="account">
+              계정
+            </label>
             <select
               id="account"
               value={accountName}
@@ -125,14 +136,18 @@ export default function NewTransactionForm() {
               className="text-sm border border-gray-300 rounded-sm p-1.5 font-light min-w-0 md:min-w-0"
             >
               {accountOptions.map((o) => (
-                <option key={o} value={o}>{o}</option>
+                <option key={o} value={o}>
+                  {o}
+                </option>
               ))}
             </select>
           </div>
 
           {/* 메모 */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-500" htmlFor="memo">메모</label>
+            <label className="text-sm text-gray-500" htmlFor="memo">
+              메모
+            </label>
             <input
               id="memo"
               value={memo}
