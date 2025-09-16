@@ -67,12 +67,12 @@ export default function SignIn() {
             />
           </div>
 
-          <div className="flex mt-5 justify-between w-full">
+          {/* <div className="flex mt-5 justify-between w-full">
             <label className="flex gap-2 items-center">
               <input type="checkbox" />
               <span className="text-xs text-gray-500">로그인 상태 유지</span>
             </label>
-          </div>
+          </div> */}
 
           <button
             onClick={handleSignIn}

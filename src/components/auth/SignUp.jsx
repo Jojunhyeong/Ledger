@@ -26,7 +26,7 @@ export default function SignUp() {
     if (!isEmail(email)) return setErr("이메일 형식이 올바르지 않습니다.");
     if (pw.length < 6) return setErr("비밀번호는 6자 이상이어야 합니다.");
     if (pw !== confirm) return setErr("비밀번호 확인이 일치하지 않습니다.");
-    if (!agree) return setErr("이용약관과 개인정보 처리방침에 동의해 주세요.");
+    // if (!agree) return setErr("이용약관과 개인정보 처리방침에 동의해 주세요.");
 
     setLoading(true);
     try {
@@ -143,7 +143,7 @@ export default function SignUp() {
             />
           </div>
 
-          <label className="flex gap-2 items-start mt-5 w-full">
+          {/* <label className="flex gap-2 items-start mt-5 w-full">
             <input
               type="checkbox"
               checked={agree}
@@ -153,7 +153,7 @@ export default function SignUp() {
             <span className="text-xs text-gray-600 leading-5">
               이용약관과 개인정보 처리방침에 동의합니다.
             </span>
-          </label>
+          </label> */}
 
           {err && (
             <div className="mt-3 text-xs text-red-600 w-full" role="alert" aria-live="polite">
