@@ -18,7 +18,7 @@ export default function NewTransactionForm() {
   const [type, setType] = useState('지출')
   const [amount, setAmount] = useState('')
   const [categoryId, setCategoryId] = useState('')
-  const [accountName, setAccountName] = useState('신한카드')
+  const [accountName, setAccountName] = useState('신용카드')
   const [memo, setMemo] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
