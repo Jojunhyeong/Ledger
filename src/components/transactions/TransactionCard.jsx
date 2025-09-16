@@ -34,7 +34,7 @@ export default function TransactionCard({
           )}
 
           <div className="flex flex-col">
-            <div className="text-sm text-center text-gray-500 md:ml-7 whitespace-nowrap md:w-16">
+            <div className="text-sm text-start text-gray-500 md:ml-7 whitespace-nowrap md:w-16 truncate">
               {category}
             </div>
           </div>
@@ -53,7 +53,7 @@ export default function TransactionCard({
 
         {isTransaction && <div className="whitespace-nowrap md:min-w-16 md:ml-7 text-sm">{account ?? '없음'}</div>}
         {isTransaction && (
-          <div className="whitespace-nowrap md:min-w-21 md:ml-4 text-sm text-gray-500">{memo ?? '없음'}</div>
+          <div className="whitespace-nowrap md:w-21 md:ml-4 text-sm text-gray-500 truncate">{memo ?? '없음'}</div>
         )}
         {isTransaction && (
           <button type="button" onClick={onDelete} aria-label="삭제">
@@ -81,7 +81,7 @@ export default function TransactionCard({
             {isTransaction && (
               <div className="text-sm text-gray-500 md:w-22 whitespace-nowrap">{date}</div>
             )}
-            <div className="text-sm text-center text-gray-500 md:ml-7 whitespace-nowrap md:w-16">
+            <div className="text-sm text-center text-gray-500 md:ml-7 whitespace-nowrap md:w-16 w-16 truncate">
               {category}
             </div>
           </div>
@@ -95,12 +95,13 @@ export default function TransactionCard({
           >
             {amount}원
           </div>
+           {isTransaction && <div className="whitespace-nowrap md:min-w-16 md:ml-7 text-gray-500 text-xs text-end">{account ?? '없음'}</div>}
           {isDashboard && <div className="text-xs md:text-sm text-gray-500 text-end">{date}</div>}
         </div>
+        
 
-        {isTransaction && <div className="whitespace-nowrap md:min-w-16 md:ml-7 text-sm">{account ?? '없음'}</div>}
         {isTransaction && (
-          <div className="whitespace-nowrap md:min-w-21 md:ml-4 text-sm text-gray-500">{memo ?? '없음'}</div>
+          <div className="whitespace-nowrap md:min-w-21 md:ml-4 text-sm text-gray-500 max-w-22 truncate">{memo ?? '없음'}</div>
         )}
         {/* 트랜잭션 모바일에서 삭제 버튼 필요하면 주석 해제
         {isTransaction && (

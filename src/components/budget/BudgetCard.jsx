@@ -13,7 +13,7 @@ export default function BudgetCard({ icon: Icon, name, limit, used, pct, editabl
             className={`w-8 h-8 rounded-sm p-1.5 ${isOver ? 'bg-red-200 text-red-500 ' : 'bg-blue-100 text-blue-500 '}`} />
         ) : null}
 
-        <div className='whitespace-nowrap w-10'>{name}</div>
+        <div className='whitespace-nowrap w-full truncate'>{name}</div>
         {editable && <Trash onClick={onDelete} className='ml-56 md:ml-54 w-4'/>}
       </div>
       <div className=" flex justify-between">
