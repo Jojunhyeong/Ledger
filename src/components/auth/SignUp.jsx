@@ -80,7 +80,7 @@ export default function SignUp() {
       <div className="w-full max-w-md mx-auto px-4 sm:px-6">
         <form onSubmit={onSubmit} className="border rounded-2xl shadow-2xl border-gray-50 bg-gray-50 p-6 sm:p-8">
           <div className="flex flex-col items-center">
-            <img className="w-15 mt-2 bg-green-100 rounded-full" src="/src/assets/moneyplan.png" alt="" />
+            <img className="w-16 mt-2 bg-green-100 rounded-full" src="/src/assets/moneyplan.png" alt="" />
             <h1 className="mt-4 text-2xl font-semibold">회원가입</h1>
             <p className="text-gray-500 mt-2 text-sm">새 계정을 만들어 보세요</p>
           </div>

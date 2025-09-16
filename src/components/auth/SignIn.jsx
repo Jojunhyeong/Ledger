@@ -33,7 +33,7 @@ export default function SignIn() {
       <div className="w-full max-w-sm mx-auto px-4 sm:px-6">
         <div className="flex flex-col items-center px-6 pb-10 border rounded-2xl shadow-2xl border-gray-50 bg-gray-50">
           <img
-            className="w-15 mt-10 bg-blue-100 rounded-full"
+            className="w-16 mt-10 bg-blue-100 rounded-full"
             src="/src/assets/moneyplan.png"
             alt=""
           />
