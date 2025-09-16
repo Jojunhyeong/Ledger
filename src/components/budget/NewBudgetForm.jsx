@@ -114,7 +114,7 @@ export default function NewBudgetForm({ open, onClose }) {
               <div className="flex flex-col gap-1">
                 <label className="text-sm">카테고리 이름</label>
                 <input
-                  className="border rounded p-2"
+                  className="border rounded p-2 border-gray-400"
                   placeholder="예: 식비"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
