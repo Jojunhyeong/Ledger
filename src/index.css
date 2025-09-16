@@ -114,5 +114,5 @@
 
 @layer base {
   html, body { @apply bg-background text-foreground font-sans; }
-  * { font-family: inherit; white-space: nowrap;} /* 자식 요소도 상속 받도록(선택) */
+  * { font-family: inherit; } /* 자식 요소도 상속 받도록(선택) */
 }
