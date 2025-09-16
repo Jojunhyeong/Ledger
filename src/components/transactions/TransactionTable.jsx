@@ -52,7 +52,7 @@ export default function TransactionTable() {
   }
 
   return (
-    <div className="md:px-3  overflow-auto mt-10 bg-white rounded-lg flex  flex-col border border-gray-200">
+    <div className="md:px-3  overflow-auto mt-10 bg-white rounded-lg flex  flex-col border border-gray-200 min-w-81">
       <div className="text-lg font-normal mt-4 ml-4 mb-4">거래 내역</div>
 
       <div className="flex flex-col">

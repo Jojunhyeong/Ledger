@@ -32,7 +32,7 @@ export default function TransactionList() {
   }, [list])
 
   return (
-    <div className=" overflow-auto mt-10 bg-white rounded-lg flex flex-col md:min-w-256">
+    <div className=" overflow-auto mt-10 bg-white rounded-lg flex flex-col md:min-w-256 min-w-72">
       <div className="text-lg font-normal mt-4 ml-4">최근 거래</div>
       {loading && rows.length === 0 ? (
         <div className="p-4 text-sm text-gray-500">불러오는 중…</div>
