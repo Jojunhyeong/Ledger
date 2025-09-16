@@ -17,7 +17,7 @@ const toDbType = (t) => {
   throw new Error("type 값이 올바르지 않습니다. (수입/지출 또는 income/expense)")
 }
 
-export const useLedgerStore = create((set, get) => ({
+export const useTransactionStore = create((set, get) => ({
   year: new Date().getFullYear(),
   month: new Date().getMonth() + 1,
   loading: false,

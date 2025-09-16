@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useLedgerStore } from '@/store/useTransactionStore'
+import { useTransactionStore } from '@/store/useTransactionStore'
 import { useCategoryStore } from '@/store/useCategoryStore'
 
 const toDbType = (v) => {
@@ -9,7 +9,7 @@ const toDbType = (v) => {
 }
 
 export default function NewTransactionForm() {
-  const addTx = useLedgerStore((s) => s.addTransactionByNames)
+  const addTx = useTransactionStore((s) => s.addTransactionByNames)
   const { items: categories, fetchAll: fetchCats } = useCategoryStore()
 
   // form state

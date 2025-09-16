@@ -1,19 +1,19 @@
 import { useEffect, useMemo, useCallback } from 'react'
-import { useLedgerStore } from '@/store/useTransactionStore'
+import { useTransactionStore } from '@/store/useTransactionStore'
 import TransactionCard from './TransactionCard'
 import { formatWon } from '@/utils/formatCurrency'
 
 const pad2 = (n) => String(n).padStart(2, '0')
 
 export default function TransactionList() {
-  const year = useLedgerStore((s) => s.year)
-  const month = useLedgerStore((s) => s.month)
-  const fetchMonth = useLedgerStore((s) => s.fetchMonth)
-  const loading = useLedgerStore((s) => s.loading)
+  const year = useTransactionStore((s) => s.year)
+  const month = useTransactionStore((s) => s.month)
+  const fetchMonth = useTransactionStore((s) => s.fetchMonth)
+  const loading = useTransactionStore((s) => s.loading)
 
   const key = `${year}-${pad2(month)}`
   // ❗ selector에서 새 참조 만들지 말 것 (|| [] 금지)
-  const items = useLedgerStore(useCallback((s) => s.itemsByKey[key], [key]))
+  const items = useTransactionStore(useCallback((s) => s.itemsByKey[key], [key]))
   const list = items ?? [] // ← 컴포넌트에서만 기본값 처리
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function TransactionList() {
   }, [list])
 
   return (
-    <div className=" overflow-auto mt-10 bg-white rounded-lg flex flex-col">
+    <div className=" overflow-auto mt-10 bg-white rounded-lg flex flex-col md:min-w-256">
       <div className="text-lg font-normal mt-4 ml-4">최근 거래</div>
       {loading && rows.length === 0 ? (
         <div className="p-4 text-sm text-gray-500">불러오는 중…</div>

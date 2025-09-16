@@ -4,7 +4,7 @@ import MonthNavigator from '@/components/dashboard/MonthNavigator'
 import StatCard from '@/components/dashboard/StatCard'
 import TransactionList from '@/components/transactions/TransactionList'
 import { formatWon } from '@/utils/formatCurrency'
-import { useLedgerStore } from '@/store/useTransactionStore'
+import { useTransactionStore } from '@/store/useTransactionStore'
 
 const pad2 = (n) => String(n).padStart(2, '0')
 const prevMonth = (y, m) => (m === 1 ? { y: y - 1, m: 12 } : { y, m: m - 1 })
@@ -17,11 +17,11 @@ const fmtPct = (v) => (v === null ? '—' : `${v > 0 ? '+' : ''}${v.toFixed(1)}%
 
 export default function DashBoard() {
   // ✅ primitive 단위 개별 구독 (안정적)
-  const year = useLedgerStore((s) => s.year)
-  const month = useLedgerStore((s) => s.month)
-  const setYearMonth = useLedgerStore((s) => s.setYearMonth)
-  const fetchMonth = useLedgerStore((s) => s.fetchMonth)
-  const loading = useLedgerStore((s) => s.loading)
+  const year = useTransactionStore((s) => s.year)
+  const month = useTransactionStore((s) => s.month)
+  const setYearMonth = useTransactionStore((s) => s.setYearMonth)
+  const fetchMonth = useTransactionStore((s) => s.fetchMonth)
+  const loading = useTransactionStore((s) => s.loading)
 
   // 현재/이전 달 키
   const { y: py, m: pm } = prevMonth(year, month)
@@ -29,8 +29,8 @@ export default function DashBoard() {
   const prevKey = `${py}-${pad2(pm)}`
 
   // ✅ selector는 새 참조 만들지 말기 (|| [] 금지) → 이후에만 기본값 처리
-  const itemsCurr = useLedgerStore(useCallback((s) => s.itemsByKey[currKey], [currKey]))
-  const itemsPrev = useLedgerStore(useCallback((s) => s.itemsByKey[prevKey], [prevKey]))
+  const itemsCurr = useTransactionStore(useCallback((s) => s.itemsByKey[currKey], [currKey]))
+  const itemsPrev = useTransactionStore(useCallback((s) => s.itemsByKey[prevKey], [prevKey]))
 
   const listCurr = itemsCurr ?? []
   const listPrev = itemsPrev ?? []

@@ -1,13 +1,13 @@
 import { useEffect, useMemo } from 'react'
-import { useLedgerStore } from '@/store/useTransactionStore'
+import { useTransactionStore } from '@/store/useTransactionStore'
 import { formatWon } from '@/utils/formatCurrency'
 import TransactionCard from './TransactionCard'
 
 export default function TransactionTable() {
-  const fetchAll = useLedgerStore((s) => s.fetchAll)
-  const loading = useLedgerStore((s) => s.loading)
-  const deleteTransaction = useLedgerStore((s) => s.deleteTransaction)
-  const list = useLedgerStore((s) => s.itemsAll) ?? []
+  const fetchAll = useTransactionStore((s) => s.fetchAll)
+  const loading = useTransactionStore((s) => s.loading)
+  const deleteTransaction = useTransactionStore((s) => s.deleteTransaction)
+  const list = useTransactionStore((s) => s.itemsAll) ?? []
 
   useEffect(() => {
     fetchAll() // 캐시 있으면 내부에서 스킵
