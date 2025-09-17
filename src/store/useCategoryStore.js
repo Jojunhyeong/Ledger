@@ -2,21 +2,33 @@
 import { create } from "zustand";
 import { supabase } from "@/lib/supabaseClient";
 
+/**
+ * categories:  id (uuid), user_id (uuid fk->profiles.id or auth.users.id), name (text), icon_key (text)
+ * UNIQUE (user_id, name)
+ * RLS 예시:
+ *  - SELECT/INSERT/UPDATE/DELETE: using (user_id = auth.uid())
+ */
+
 export const useCategoryStore = create((set, get) => ({
   loading: false,
-  items: [], // [{ id, name, icon_key, kind? }]
+  items: [], // [{ id, name, icon_key }]
 
   // READ
   async fetchAll() {
     set({ loading: true });
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: userErr,
+      } = await supabase.auth.getUser();
+      if (userErr) throw userErr;
+
       if (!user) {
         set({ items: [], loading: false });
         return;
       }
 
-      // kind 컬럼이 없을 수도 있으므로 시도 → 실패하면 kind 제외하고 다시 시도
+      // kind 컬럼이 있을 수도/없을 수도 있는 환경 대응
       let { data, error } = await supabase
         .from("categories")
         .select("id, name, icon_key, kind")
@@ -44,18 +56,37 @@ export const useCategoryStore = create((set, get) => ({
     return get().fetchAll();
   },
 
-  // CREATE/UPSERT (user_id는 보내지 않음: DB가 auth.uid()로 채움)
+  /**
+   * CREATE/UPSERT
+   * - FK 에러 방지: profiles에 사용자 행이 없으면 먼저 upsert로 보장
+   * - UNIQUE (user_id, name) 기반 멱등 처리
+   */
   async upsert({ name, icon_key }) {
-    // (user_id, name) 유니크 인덱스가 있어야 함
+    const {
+      data: { user },
+      error: userErr,
+    } = await supabase.auth.getUser();
+    if (userErr) throw userErr;
+    if (!user) throw new Error("로그인이 필요합니다");
+
+    // 🔐 FK 보장 (profiles.id = user.id 행이 반드시 존재하도록)
+    await supabase
+      .from("profiles")
+      .upsert({ id: user.id }, { onConflict: "id" });
+
+    // 실제 upsert
     const { data, error } = await supabase
       .from("categories")
-      .upsert({ name, icon_key }, { onConflict: "user_id,name" })
-      .select("id, name, icon_key") // kind가 없어도 안전
+      .upsert(
+        { user_id: user.id, name, icon_key },
+        { onConflict: "user_id,name" }
+      )
+      .select("id, name, icon_key")
       .single();
 
     if (error) throw error;
 
-    // 로컬 상태도 갱신(중복 방지)
+    // 로컬 상태 갱신
     set((s) => {
       const exists = s.items.some((c) => c.id === data.id);
       const items = exists
@@ -67,7 +98,7 @@ export const useCategoryStore = create((set, get) => ({
     return data;
   },
 
-  // UPDATE: 이름/아이콘 변경
+  // UPDATE
   async rename(id, { name, icon_key }) {
     const { data, error } = await supabase
       .from("categories")
@@ -85,13 +116,13 @@ export const useCategoryStore = create((set, get) => ({
   },
 
   // DELETE
-  async delete(id) {
+  async remove(id) {
     const { error } = await supabase.from("categories").delete().eq("id", id);
     if (error) throw error;
     set((s) => ({ items: s.items.filter((c) => c.id !== id) }));
   },
 
-  // 로컬에 즉시 추가(폼 제출 직후 대비용)
+  // 로컬에 즉시 추가(필요 시)
   addLocal(cat) {
     set((s) => {
       const exists = s.items.some((c) => c.id === cat.id);
@@ -99,7 +130,7 @@ export const useCategoryStore = create((set, get) => ({
     });
   },
 
-  // 로그아웃 등 초기화
+  // 초기화
   reset() {
     set({ items: [] });
   },
