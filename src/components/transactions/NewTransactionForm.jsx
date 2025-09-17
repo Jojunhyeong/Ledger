@@ -162,7 +162,7 @@ export default function NewTransactionForm() {
         <div className="flex justify-between gap-6">
           <div className='flex gap-3 md:hidden'>
           <div>💡</div>
-          <div className='text-xs text-gray-500'> 💡새로운 카테고리는 설정에서 추가할 수 있어요.</div>
+          <div className='text-xs text-gray-500'> 새로운 카테고리는 설정에서 추가할 수 있어요.</div>
           </div>
           <div className='md:flex hidden'>
           <div className='text-xs text-gray-500'> 💡 새로운 카테고리는 설정에서 추가할 수 있어요.</div>
