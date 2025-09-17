@@ -116,7 +116,7 @@ export const useCategoryStore = create((set, get) => ({
   },
 
   // DELETE
-  async remove(id) {
+  async delete(id) {
     const { error } = await supabase.from("categories").delete().eq("id", id);
     if (error) throw error;
     set((s) => ({ items: s.items.filter((c) => c.id !== id) }));
