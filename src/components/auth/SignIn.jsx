@@ -12,8 +12,9 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
 
-  const handleSignIn = async () => {
-    if (loading) return;              // ✅ 가드 먼저
+  const handleSignIn = async (e) => {
+    e?.preventDefault();   //  폼 제출 시 새로고침 방지
+    if (loading) return;              //  가드 먼저
     setLoading(true);
     setMsg("");
 
@@ -28,16 +29,15 @@ export default function SignIn() {
     }
   };
 
-  return (
+ return (
     <div className="min-h-screen bg-blue-50 flex items-center">
       <div className="w-full max-w-sm mx-auto px-4 sm:px-6">
-        <div className="flex flex-col items-center px-6 pb-10 border rounded-2xl shadow-2xl border-gray-50 bg-gray-50">
-          <img
-            className="w-16 mt-10 bg-blue-100 rounded-full"
-            src="/moneyplan.png"
-            alt=""
-          />
-          <div className="mt-4 text-2xl font-semibold">가계부</div>
+        <form
+          onSubmit={handleSignIn}
+          className="flex flex-col items-center px-6 pb-10 border rounded-2xl shadow-2xl border-gray-50 bg-gray-50"
+        >
+          <img className="w-16 mt-10 bg-blue-100 rounded-full" src="/moneyplan.png" alt="" />
+          <div className="mt-4 text-2xl font-semibold">머니플랜</div>
           <div className="text-gray-500 mt-2 text-sm">계정에 로그인하세요</div>
 
           <div className="flex flex-col items-start w-full mt-8 gap-2">
@@ -48,7 +48,6 @@ export default function SignIn() {
               placeholder=" ✉️    이메일을 입력하세요"
               className="border rounded w-full h-11 px-3 text-base border-gray-400 placeholder:text-xs"
               autoComplete="email"
-              autoCapitalize="none"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -67,15 +66,8 @@ export default function SignIn() {
             />
           </div>
 
-          {/* <div className="flex mt-5 justify-between w-full">
-            <label className="flex gap-2 items-center">
-              <input type="checkbox" />
-              <span className="text-xs text-gray-500">로그인 상태 유지</span>
-            </label>
-          </div> */}
-
           <button
-            onClick={handleSignIn}
+            type="submit"   // ✅ submit 타입으로 변경
             disabled={loading}
             className="bg-blue-500 text-white text-sm py-3 rounded w-full mt-5 disabled:opacity-50"
           >
@@ -86,11 +78,11 @@ export default function SignIn() {
 
           <div className="flex gap-1 mt-5 text-sm">
             <span className="text-gray-500">계정이 없으신가요?</span>
-            <button onClick={() => navigate("/signup")} className="text-blue-500">
+            <button type="button" onClick={() => navigate("/signup")} className="text-blue-500">
               회원가입
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
