@@ -15,7 +15,7 @@ export default function Header() {
     <>
       {/* 데스크톱 전용 헤더 (위쪽) */}
       <div className="hidden md:flex w-full bg-white justify-between items-center pt-4 pb-4">
-        <div className="text-xl ml-10">가계부</div>
+        <div className="text-xl ml-10">머니플랜</div>
         <div className="flex gap-10 mr-10">
           <NavLink to="/dashboard" className={navClass} end>
             대시보드
@@ -26,6 +26,9 @@ export default function Header() {
           <NavLink to="/budget" className={navClass}>
             예산
           </NavLink>
+          <NavLink to="/setting" className={navClass}>
+          설정
+          </NavLink>
           <Link to="/signin" onClick={signOut} className="text-red-500 text-sm">
             로그아웃
           </Link>
@@ -34,7 +37,7 @@ export default function Header() {
 
       {/* 모바일 전용 헤더 (위쪽) */}
       <div className="flex md:hidden w-full fixed top-0 bg-white justify-center items-center pt-4 pb-4">
-        <div className="text-xl">가계부</div>
+        <div className="text-xl">머니플랜</div>
       </div>
 
       {/* 모바일 전용 헤더 (아래쪽 탭바 느낌) */}
@@ -48,9 +51,12 @@ export default function Header() {
         <NavLink to="/budget" className={navClass}>
           예산
         </NavLink>
-        <Link to="/signin" onClick={signOut} className="text-red-500 text-sm">
+        <NavLink to="/setting" className={navClass}>
+        설정
+        </NavLink>
+        <NavLink to="/signin" onClick={signOut} className="text-red-500 text-sm">
           로그아웃
-        </Link>
+        </NavLink>
       </div>
     </>
   )

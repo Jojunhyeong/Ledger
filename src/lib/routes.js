@@ -5,5 +5,6 @@ export const ROUTES = {
     TRANSACTION: '/transaction',
     BUDGET: '/budget',
     SIGNIN: '/signin',
-    SIGNUP: '/signup'
+    SIGNUP: '/signup',
+    SETTING: '/setting',
 }

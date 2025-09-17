@@ -7,6 +7,7 @@ import Transaction from "./pages/Transaction";
 import Budget from "./pages/Budget";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
+import Setting from "./pages/Setting";
 
 export default function AppRoutes() {
   return (
@@ -18,6 +19,7 @@ export default function AppRoutes() {
       <Route path={ROUTES.DASHBOARD} element={<DashBoard/>}/>
        <Route path={ROUTES.TRANSACTION} element={<Transaction/>}/>
        <Route path={ROUTES.BUDGET} element={<Budget/>}/>
+       <Route path={ROUTES.SETTING} element={<Setting/>}/>
       </Route>
       <Route path={ROUTES.PREVIEW} element={<Preview/>}/>
     </Routes>
