@@ -9,22 +9,10 @@ const getCurrentYyyymm = () => {
   return `${d.getFullYear()}${pad2(d.getMonth() + 1)}`; // e.g. '202509'
 };
 
-/**
- * budgets_with_usage_name 뷰 컬럼 가정:
- * - id, user_id, yyyymm, category_id, limit_amount, used_amount, name, icon_key ...
- * budgets 테이블 PK/FK:
- * - user_id (FK -> profiles.id)
- * - category_id (FK -> categories.id)
- * - unique(user_id, yyyymm, category_id)
- * categories 테이블 PK/FK:
- * - user_id (FK -> profiles.id)
- * - unique(user_id, name)
- */
-
 export const useBudgetStore = create((set, get) => ({
   loading: false,
   yyyymm: getCurrentYyyymm(),
-  items: [],
+  items: [], // [{ budget_id, category_id, category_name, category_icon_key, limit_amount, used_amount, yyyymm }]
 
   // READ
   fetchThisMonth: async ({ force = false } = {}) => {
@@ -46,11 +34,25 @@ export const useBudgetStore = create((set, get) => ({
       const { data, error } = await supabase
         .from("budgets_with_usage_name")
         .select("*")
-        .eq("user_id", user.id) // 성능 + 안전
+        .eq("user_id", user.id)
         .eq("yyyymm", yyyymm);
 
       if (error) throw error;
-      set({ items: data ?? [], loading: false });
+
+      // ✅ 뷰 컬럼 이름이 프로젝트마다 조금 다를 수 있으니 안전하게 매핑
+      const items = (data ?? []).map((r) => ({
+        budget_id: r.budget_id,
+        category_id: r.category_id,
+        // 뷰가 name 또는 category_name 중 하나를 줄 수 있음
+        category_name: r.category_name ?? r.name ?? "기타",
+        // icon_key는 그대로 사용하되, 없으면 'wallet'로 폴백
+        category_icon_key: r.icon_key ?? "wallet",
+        limit_amount: r.limit_amount ?? 0,
+        used_amount: r.used_amount ?? 0,
+        yyyymm: r.yyyymm,
+      }));
+
+      set({ items, loading: false });
     } catch (e) {
       console.error("[fetchThisMonth error]", e);
       set({ items: [], loading: false });
@@ -61,7 +63,6 @@ export const useBudgetStore = create((set, get) => ({
 
   // CREATE / UPSERT
   addBudget: async ({ categoryId, name, icon_key, limit_amount }) => {
-    // 로그인 보장
     const {
       data: { user },
       error: userErr,
@@ -69,11 +70,11 @@ export const useBudgetStore = create((set, get) => ({
     if (userErr) throw userErr;
     if (!user) throw new Error("로그인이 필요합니다");
 
-    await supabase.from('profiles').upsert({ id: user.id }, { onConflict: 'id' });
+    await supabase.from("profiles").upsert({ id: user.id }, { onConflict: "id" });
 
     let cid = categoryId;
 
-    // 1) 카테고리 upsert (user_id 반드시 포함!)
+    // 1) 카테고리 upsert (존재하지 않으면 생성)
     if (!cid) {
       const { data: cat, error: catErr } = await supabase
         .from("categories")
@@ -87,7 +88,7 @@ export const useBudgetStore = create((set, get) => ({
       if (catErr) throw catErr;
       cid = cat.id;
 
-      // 전역 카테고리 스토어 갱신(존재 시 교체, 없으면 추가)
+      // 카테고리 스토어도 즉시 갱신
       useCategoryStore.getState().addLocal(cat);
     }
 
@@ -107,7 +108,6 @@ export const useBudgetStore = create((set, get) => ({
 
   // UPDATE
   updateBudget: async (id, { limit_amount }) => {
-    // 보통 RLS가 user_id=auth.uid()로 보호하므로 id만으로도 안전
     const { error } = await supabase
       .from("budgets")
       .update({ limit_amount })
@@ -123,6 +123,6 @@ export const useBudgetStore = create((set, get) => ({
     await get().refresh();
   },
 
-  // (옵션) 로그아웃 시 초기화
+  // 로그아웃 등 초기화
   reset: () => set({ items: [] }),
 }));
