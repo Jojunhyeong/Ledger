@@ -33,6 +33,7 @@ export const useCategoryStore = create((set, get) => ({
         .from("categories")
         .select("id, name, icon_key, kind")
         .eq("user_id", user.id)
+        .order("priority", {ascending: true})
         .order("name", { ascending: true });
 
       if (error && /column .* kind .* does not exist/i.test(error.message)) {
