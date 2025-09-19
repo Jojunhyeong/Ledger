@@ -103,12 +103,12 @@ export default function TransactionCard({
         {isTransaction && (
           <div className="whitespace-nowrap md:min-w-21 md:ml-4 text-sm text-gray-500 max-w-22 truncate">{memo ?? '없음'}</div>
         )}
-        {/* 트랜잭션 모바일에서 삭제 버튼 필요하면 주석 해제
+  
         {isTransaction && (
-          <button type="button" onClick={onDelete} aria-label="삭제">
+          <button className="text-xs" type="button" onClick={onDelete} aria-label="삭제">
             🗑️
           </button>
-        )} */}
+        )}
       </div>
     </>
   )
