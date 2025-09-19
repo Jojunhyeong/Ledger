@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
+import { authErrorToKo } from "@/utils/authErrorKo";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function SignIn() {
       navigate("/dashboard");
     } catch (err) {
       console.error(err);
-      setMsg(`로그인 실패: ${err.message}`);
+      setMsg(authErrorToKo(err));
     } finally {
       setLoading(false);
     }
