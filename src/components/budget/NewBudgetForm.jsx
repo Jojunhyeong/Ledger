@@ -129,7 +129,7 @@ export default function NewBudgetForm({ open, onClose }) {
               type="text"
               className="border border-gray-400 rounded p-2"
               value={limitAmount}
-              onChange={(e) => setLimitAmount(Number(e.target.value || ''))}
+              onChange={(e) => setLimitAmount(e.target.value || '')}
               
             />
           </div>
